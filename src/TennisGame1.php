@@ -34,23 +34,22 @@ class TennisGame1 implements TennisGame
             return $this->calculateDeuce();
         }
 
-        if ($this->m_score1 >= 4 || $this->m_score2 >= 4) {
-            $minusResult = $this->m_score1 - $this->m_score2;
-            if ($minusResult !== 1) {
-                if ($minusResult === -1) {
-                    $score = 'Advantage player2';
-                } elseif ($minusResult >= 2) {
-                    $score = 'Win for player1';
-                } else {
-                    $score = 'Win for player2';
-                }
-            } else {
-                $score = 'Advantage player1';
-            }
-        } else {
-            $score = $this->roundsScore($score);
+        if ($this->m_score1 < 4 && $this->m_score2 < 4) {
+            return $this->roundsScore($score);
         }
 
+        $minusResult = $this->m_score1 - $this->m_score2;
+        if ($minusResult !== 1) {
+            if ($minusResult === -1) {
+                $score = 'Advantage player2';
+            } elseif ($minusResult >= 2) {
+                $score = 'Win for player1';
+            } else {
+                $score = 'Win for player2';
+            }
+        } else {
+            $score = 'Advantage player1';
+        }
 
         return $score;
     }
@@ -79,6 +78,7 @@ class TennisGame1 implements TennisGame
 
             $score = $this->getTempScoreName($tempScore, $score);
         }
+
         return $score;
     }
 
