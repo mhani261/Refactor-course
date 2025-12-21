@@ -30,26 +30,27 @@ class TennisGame1 implements TennisGame
     public function getScore(): string
     {
         $score = '';
-        if ($this->m_score1 !== $this->m_score2) {
-            if ($this->m_score1 >= 4 || $this->m_score2 >= 4) {
-                $minusResult = $this->m_score1 - $this->m_score2;
-                if ($minusResult !== 1) {
-                    if ($minusResult === -1) {
-                        $score = 'Advantage player2';
-                    } elseif ($minusResult >= 2) {
-                        $score = 'Win for player1';
-                    } else {
-                        $score = 'Win for player2';
-                    }
+        if ($this->m_score1 === $this->m_score2) {
+            return $this->calculateDeuce();
+        }
+
+        if ($this->m_score1 >= 4 || $this->m_score2 >= 4) {
+            $minusResult = $this->m_score1 - $this->m_score2;
+            if ($minusResult !== 1) {
+                if ($minusResult === -1) {
+                    $score = 'Advantage player2';
+                } elseif ($minusResult >= 2) {
+                    $score = 'Win for player1';
                 } else {
-                    $score = 'Advantage player1';
+                    $score = 'Win for player2';
                 }
             } else {
-                $score = $this->roundsScore($score);
+                $score = 'Advantage player1';
             }
         } else {
-            $score = $this->getScoreName();
+            $score = $this->roundsScore($score);
         }
+
 
         return $score;
     }
@@ -57,7 +58,7 @@ class TennisGame1 implements TennisGame
     /**
      * @return string
      */
-    private function getScoreName(): string
+    private function calculateDeuce(): string
     {
         return match ($this->m_score1) {
             0 => 'Love-All',
@@ -73,8 +74,8 @@ class TennisGame1 implements TennisGame
      */
     private function roundsScore(string $score): string
     {
-        for ($i = 1; $i < 3; $i++) {
-            list($tempScore, $score) = $this->getTempScore($i, $score);
+        for ($iteration = 1; $iteration < 3; $iteration++) {
+            list($tempScore, $score) = $this->getTempScore($iteration, $score);
 
             $score = $this->getTempScoreName($tempScore, $score);
         }
