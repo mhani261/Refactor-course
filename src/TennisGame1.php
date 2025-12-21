@@ -38,20 +38,7 @@ class TennisGame1 implements TennisGame
             return $this->roundsScore($score);
         }
 
-        $minusResult = $this->m_score1 - $this->m_score2;
-        if ($minusResult !== 1) {
-            if ($minusResult === -1) {
-                $score = 'Advantage player2';
-            } elseif ($minusResult >= 2) {
-                $score = 'Win for player1';
-            } else {
-                $score = 'Win for player2';
-            }
-        } else {
-            $score = 'Advantage player1';
-        }
-
-        return $score;
+        return $this->getWinnersAccordingToMinusResult($this->calculateMinusResult());
     }
 
     /**
@@ -110,5 +97,27 @@ class TennisGame1 implements TennisGame
         }
 
         return [$this->m_score1, $score];
+    }
+
+    /**
+     * @return int
+     */
+    private function calculateMinusResult(): int
+    {
+        return $this->m_score1 - $this->m_score2;
+    }
+
+    /**
+     * @param int $minusResult
+     * @return string
+     */
+    private function getWinnersAccordingToMinusResult(int $minusResult): string
+    {
+        return match (true) {
+            $minusResult === 1 => 'Advantage player1',
+            $minusResult === -1 => 'Advantage player2',
+            $minusResult >= 2 => 'Win for player1',
+            default => 'Win for player2',
+        };
     }
 }
