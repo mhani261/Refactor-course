@@ -18,24 +18,20 @@ class TennisGame1 implements TennisGame
 
     public function wonPoint(string $playerName): void
     {
-        if ($playerName === 'player1') {
-            $this->m_score1++;
-        }
-
-        if ($playerName === 'player2') {
-            $this->m_score2++;
-        }
+        match ($playerName) {
+            'player1' => $this->m_score1++,
+            'player2' => $this->m_score2++,
+        };
     }
 
     public function getScore(): string
     {
-        $score = '';
         if ($this->m_score1 === $this->m_score2) {
             return $this->calculateDeuce();
         }
 
         if ($this->m_score1 < 4 && $this->m_score2 < 4) {
-            return $this->roundsScore($score);
+            return $this->roundsScore($score = '');
         }
 
         return $this->getWinnersAccordingToMinusResult($this->calculateMinusResult());
