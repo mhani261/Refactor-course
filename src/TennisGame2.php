@@ -23,22 +23,9 @@ class TennisGame2 implements TennisGame
     public function getScore(): string
     {
         $score = '';
-        if ($this->playerOnePoint === $this->playerTwoPoint && $this->playerOnePoint < 4) {
-            if ($this->playerOnePoint === 0) {
-                $score = 'Love';
-            }
-            if ($this->playerOnePoint === 1) {
-                $score = 'Fifteen';
-            }
-            if ($this->playerOnePoint === 2) {
-                $score = 'Thirty';
-            }
-            $score .= '-All';
-        }
+        $score = $this->isResultDraw($score);
 
-        if ($this->playerOnePoint === $this->playerTwoPoint && $this->playerOnePoint >= 3) {
-            $score = 'Deuce';
-        }
+        $score = $this->isResultDeuce($score);
 
         if ($this->playerOnePoint > 0 && $this->playerTwoPoint === 0) {
             if ($this->playerOnePoint === 1) {
@@ -151,5 +138,35 @@ class TennisGame2 implements TennisGame
     private function P2Score(): void
     {
         $this->playerTwoPoint++;
+    }
+
+    /**
+     * @param string $score
+     * @return string
+     */
+    private function isResultDraw(string $score): string
+    {
+        if ($this->playerOnePoint !== $this->playerTwoPoint || $this->playerOnePoint >= 4) {
+            return $score;
+        }
+
+        return $score .= match ($this->playerOnePoint) {
+            0 => 'Love-All',
+            1 => 'Fifteen-All',
+            2 => 'Thirty-All',
+            default => '',
+        };
+    }
+
+    /**
+     * @param string $score
+     * @return string
+     */
+    private function isResultDeuce(string $score): string
+    {
+        if ($this->playerOnePoint === $this->playerTwoPoint && $this->playerOnePoint >= 3) {
+            $score = 'Deuce';
+        }
+        return $score;
     }
 }
