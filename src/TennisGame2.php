@@ -14,12 +14,6 @@ class TennisGame2 implements TennisGame
 
     private string $playerTwoResult = '';
 
-    public function __construct(
-        private string $playerOneName,
-        private string $playerTwoName
-    ) {
-    }
-
     public function getScore(): string
     {
         $score = '';
@@ -27,20 +21,7 @@ class TennisGame2 implements TennisGame
 
         $score = $this->isResultDeuce($score);
 
-        if ($this->playerOnePoint > 0 && $this->playerTwoPoint === 0) {
-            if ($this->playerOnePoint === 1) {
-                $this->playerOneResult = 'Fifteen';
-            }
-            if ($this->playerOnePoint === 2) {
-                $this->playerOneResult = 'Thirty';
-            }
-            if ($this->playerOnePoint === 3) {
-                $this->playerOneResult = 'Forty';
-            }
-
-            $this->playerTwoResult = 'Love';
-            $score = "{$this->playerOneResult}-{$this->playerTwoResult}";
-        }
+        $score = $this->isPlayerOneWin($score);
 
         if ($this->playerTwoPoint > 0 && $this->playerOnePoint === 0) {
             if ($this->playerTwoPoint === 1) {
@@ -116,20 +97,6 @@ class TennisGame2 implements TennisGame
         }
     }
 
-    private function SetP1Score(int $number): void
-    {
-        for ($i = 0; $i < $number; $i++) {
-            $this->P1Score();
-        }
-    }
-
-    private function SetP2Score(int $number): void
-    {
-        for ($i = 0; $i < $number; $i++) {
-            $this->P2Score();
-        }
-    }
-
     private function P1Score(): void
     {
         $this->playerOnePoint++;
@@ -150,7 +117,7 @@ class TennisGame2 implements TennisGame
             return $score;
         }
 
-        return $score .= match ($this->playerOnePoint) {
+        return $score . match ($this->playerOnePoint) {
             0 => 'Love-All',
             1 => 'Fifteen-All',
             2 => 'Thirty-All',
@@ -168,5 +135,25 @@ class TennisGame2 implements TennisGame
             $score = 'Deuce';
         }
         return $score;
+    }
+
+    /**
+     * @param string $score
+     * @return string
+     */
+    private function isPlayerOneWin(string $score): string
+    {
+        if ($this->playerOnePoint <= 0 || $this->playerOnePoint >= 4 || $this->playerTwoPoint !== 0) {
+            return $score;
+        }
+
+        $this->playerOneResult = match ($this->playerOnePoint) {
+            1 => 'Fifteen',
+            2 => 'Thirty',
+            3 => 'Forty',
+        };
+
+        $this->playerTwoResult = 'Love';
+        return "{$this->playerOneResult}-{$this->playerTwoResult}";
     }
 }
