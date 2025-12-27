@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TennisGame;
 
+use function ECSPrefix202306\dd;
+
 class TennisGame2 implements TennisGame
 {
     private int $playerOnePoint = 0;
@@ -14,6 +16,25 @@ class TennisGame2 implements TennisGame
 
     private string $playerTwoResult = '';
 
+    public function wonPoint(string $player): void
+    {
+        if ($player === 'player1') {
+            $this->P1Score();
+        } else {
+            $this->P2Score();
+        }
+    }
+
+    private function P1Score(): void
+    {
+        $this->playerOnePoint++;
+    }
+
+    private function P2Score(): void
+    {
+        $this->playerTwoPoint++;
+    }
+
     public function getScore(): string
     {
         $score = '';
@@ -21,21 +42,9 @@ class TennisGame2 implements TennisGame
 
         $score = $this->isResultDeuce($score);
 
-        $score = $this->isPlayerOneWin($score);
+        $score = $this->isPlayerOneWon($score);
 
-        if ($this->playerTwoPoint > 0 && $this->playerOnePoint === 0) {
-            if ($this->playerTwoPoint === 1) {
-                $this->playerTwoResult = 'Fifteen';
-            }
-            if ($this->playerTwoPoint === 2) {
-                $this->playerTwoResult = 'Thirty';
-            }
-            if ($this->playerTwoPoint === 3) {
-                $this->playerTwoResult = 'Forty';
-            }
-            $this->playerOneResult = 'Love';
-            $score = "{$this->playerOneResult}-{$this->playerTwoResult}";
-        }
+        $score = $this->isPlayerTwoWon($score);
 
         if ($this->playerOnePoint > $this->playerTwoPoint && $this->playerOnePoint < 4) {
             if ($this->playerOnePoint === 2) {
@@ -88,29 +97,6 @@ class TennisGame2 implements TennisGame
         return $score;
     }
 
-    public function wonPoint(string $player): void
-    {
-        if ($player === 'player1') {
-            $this->P1Score();
-        } else {
-            $this->P2Score();
-        }
-    }
-
-    private function P1Score(): void
-    {
-        $this->playerOnePoint++;
-    }
-
-    private function P2Score(): void
-    {
-        $this->playerTwoPoint++;
-    }
-
-    /**
-     * @param string $score
-     * @return string
-     */
     private function isResultDraw(string $score): string
     {
         if ($this->playerOnePoint !== $this->playerTwoPoint || $this->playerOnePoint >= 4) {
@@ -125,35 +111,45 @@ class TennisGame2 implements TennisGame
         };
     }
 
-    /**
-     * @param string $score
-     * @return string
-     */
     private function isResultDeuce(string $score): string
     {
         if ($this->playerOnePoint === $this->playerTwoPoint && $this->playerOnePoint >= 3) {
             $score = 'Deuce';
         }
+
         return $score;
     }
 
-    /**
-     * @param string $score
-     * @return string
-     */
-    private function isPlayerOneWin(string $score): string
+    private function isPlayerOneWon(string $score): string
     {
         if ($this->playerOnePoint <= 0 || $this->playerOnePoint >= 4 || $this->playerTwoPoint !== 0) {
             return $score;
         }
 
-        $this->playerOneResult = match ($this->playerOnePoint) {
+        $this->playerOneResult = $this->calculatePlayerResult($this->playerOneResult, $this->playerOnePoint);
+        $this->playerTwoResult = 'Love';
+
+        return "{$this->playerOneResult}-{$this->playerTwoResult}";
+    }
+
+    private function isPlayerTwoWon(string $score): string
+    {
+        if ($this->playerTwoPoint <= 0 || $this->playerOnePoint !== 0 || $this->playerTwoPoint >= 4) {
+            return $score;
+        }
+
+        $this->playerTwoResult = $this->calculatePlayerResult($this->playerTwoResult, $this->playerTwoPoint);
+        $this->playerOneResult = 'Love';
+
+        return "{$this->playerOneResult}-{$this->playerTwoResult}";
+    }
+
+    private function calculatePlayerResult($playerResult, $playerPoints)
+    {
+        return $playerResult = match ($playerPoints) {
             1 => 'Fifteen',
             2 => 'Thirty',
             3 => 'Forty',
         };
-
-        $this->playerTwoResult = 'Love';
-        return "{$this->playerOneResult}-{$this->playerTwoResult}";
     }
 }
